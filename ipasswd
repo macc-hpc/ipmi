@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+ipmitool=/usr/bin/ipmitool
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <host> <new password>" >&2
+    exit 1
+fi
+
+if [ -z ${IPMI_USERNAME:-} ] || [ -z ${IPMI_PASSWORD:-} ]; then
+    echo "IPMI_USERNAME or IPMI_PASSWORD environment variables not found" >&2
+    exit 1
+fi
+
+host=$1
+password=$2
+username=$IPMI_USERNAME
+
+echo "[$host] "
+$ipmitool -I lanplus -E -H "$host" -U "$username" user set password 2 "$password"
+
+# vim: tabstop=4 shiftwidth=4 expandtab:

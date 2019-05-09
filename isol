@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+ipmitool=/usr/bin/ipmitool
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <host>" >&2
+    exit 1
+fi
+
+if [ -z ${IPMI_USERNAME:-} ] || [ -z ${IPMI_PASSWORD:-} ]; then
+    echo "IPMI_USERNAME or IPMI_PASSWORD environment variables not found" >&2
+    exit 1
+fi
+
+username=$IPMI_USERNAME
+host=$1
+
+shift
+
+$ipmitool -I lanplus -E -H "$host" -U "$username" sol activate
+
+# vim: tabstop=4 shiftwidth=4 expandtab:
